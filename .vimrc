@@ -1,16 +1,11 @@
 "
-" pathogen Configuration
-"
-" execute pathogen#infect()
-
-"
 " Vundler Configuration
 "
 set nocompatible              " be iMproved
 filetype off
 
-set rtp+=$HOME/.vim/bundle/vundle/
-call vundle#rc('$HOME/.vim/')
+set runtimepath+=$HOME/.vim/bundle/vundle/
+call vundle#rc('$HOME/.vim/bundle')
 " let Vundle manage Vundle
 " " required! 
 "
@@ -19,7 +14,6 @@ call vundle#rc('$HOME/.vim/')
 " " original repos on GitHub
 Bundle 'gmarik/vundle'
 Bundle 'tomasr/molokai'
-Bundle 'tpope/vim-pathogen'
 Bundle 'scrooloose/nerdtree'
 Bundle 'wesleyche/SrcExpl'
 Bundle 'vim-scripts/taglist.vim'
@@ -28,10 +22,9 @@ Bundle 'MarcWeber/vim-addon-mw-utils'
 Bundle 'tomtom/tlib_vim'
 Bundle 'garbas/vim-snipmate'
 Bundle 'honza/vim-snippets'
-
 Bundle 'AutoComplPop'
-Bundle 'SuperTab'
 Bundle 'a.vim'
+"Bundle 'SuperTab'
 "Bundle 'SuperTab-continued'
 
 " " ...
@@ -68,6 +61,7 @@ set smartcase
 set incsearch
 set mouse=a
 
+set nocompatible
 set tabstop=4
 set shiftwidth=4
 set softtabstop=4
@@ -77,9 +71,14 @@ set backspace=2
 "set fileencoding=cp949
 
 if has("gui_running")
-    set guifont=Monaco:h10:cANSI
+    set guifont=Monaco:h9:cANSI
 	au GUIEnter * simalt ~x
 endif
+
+"
+" a.vim Configuration
+"
+nmap <F4> :A<cr>
 
 "
 " NERDTree Configuration
@@ -119,10 +118,28 @@ let g:SrcExpl_isUpdateTags = 0
 "
 " OmniCppComplete
 "
-autocmd FileType python set omnifunc=pythoncomplete#Complete
-autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
-autocmd FileType css set omnifunc=csscomplete#CompleteCSS
-autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
-autocmd FileType php set omnifunc=phpcomplete#CompletePHP
-autocmd FileType c set omnifunc=ccomplete#CompleteCpp
+set tags+=$HOME/.vim/tags/qt5
+au BufNewFile,BufRead,BufEnter *.cpp,*.hpp set omnifunc=omni#cpp#complete#Main
+" OmniCppComplete
+let OmniCpp_NamespaceSearch = 1
+let OmniCpp_GlobalScopeSearch = 1
+let OmniCpp_ShowAccess = 1
+let OmniCpp_ShowPrototypeInAbbr = 1 " show function parameters
+let OmniCpp_MayCompleteDot = 1 " autocomplete after .
+let OmniCpp_MayCompleteArrow = 1 " autocomplete after ->
+let OmniCpp_MayCompleteScope = 1 " autocomplete after ::
+let OmniCpp_DefaultNamespaces = ["std", "_GLIBCXX_STD"]
+" automatically open and close the popup menu / preview window
+au CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
+set completeopt=menuone,menu,longest,preview
+map <C-F12> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+
+" insert gate when create new header file. 
+function! s:insert_gates()
+  let gatename = substitute(toupper(expand("%:t")), "\\.", "_", "g")
+  execute "normal! i#ifndef " . gatename
+  execute "normal! o#define " . gatename . " "
+  execute "normal! Go#endif /* " . gatename . " */"
+  normal! kk
+endfunction
+autocmd BufNewFile *.{h,hpp} call <SID>insert_gates()

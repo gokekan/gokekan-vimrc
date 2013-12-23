@@ -24,6 +24,8 @@ Bundle 'garbas/vim-snipmate'
 Bundle 'honza/vim-snippets'
 Bundle 'AutoComplPop'
 Bundle 'a.vim'
+Bundle 'cpp.vim'
+Bundle 'artoj/qmake-syntax-vim'
 "Bundle 'SuperTab'
 "Bundle 'SuperTab-continued'
 
@@ -62,16 +64,16 @@ set incsearch
 set mouse=a
 
 set nocompatible
-set tabstop=4
-set shiftwidth=4
-set softtabstop=4
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
 set history=1000
 set backspace=2
 "set encoding=utf-8
 "set fileencoding=cp949
 
 if has("gui_running")
-    set guifont=Monaco:h9:cANSI
+  set guifont=Monaco:h9:cANSI
 	au GUIEnter * simalt ~x
 endif
 
@@ -85,8 +87,8 @@ nmap <F4> :A<cr>
 "
 "autocmd vimenter * NERDTree
 "autocmd vimenter * if !argc() | NERDTree | endif
-"autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
-nmap <F5> :NERDTreeToggle<cr>
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+nmap <C-n> :NERDTreeToggle<cr>
 let NERDTreeWinPos="left"
 
 "
@@ -116,11 +118,10 @@ let g:SrcExpl_gobackKey = "<SPACE>"
 let g:SrcExpl_isUpdateTags = 0
 
 "
-" OmniCppComplete
+" OmniCppComplete Configuration
 "
 set tags+=$HOME/.vim/tags/qt5
 au BufNewFile,BufRead,BufEnter *.cpp,*.hpp set omnifunc=omni#cpp#complete#Main
-" OmniCppComplete
 let OmniCpp_NamespaceSearch = 1
 let OmniCpp_GlobalScopeSearch = 1
 let OmniCpp_ShowAccess = 1
@@ -133,6 +134,7 @@ let OmniCpp_DefaultNamespaces = ["std", "_GLIBCXX_STD"]
 au CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
 set completeopt=menuone,menu,longest,preview
 map <C-F12> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+"map <C-F12> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q --language-force=C++ -f .<CR>
 
 " insert gate when create new header file. 
 function! s:insert_gates()
@@ -143,3 +145,6 @@ function! s:insert_gates()
   normal! kk
 endfunction
 autocmd BufNewFile *.{h,hpp} call <SID>insert_gates()
+
+" Vim syntax highlighting for Qt's .pro files
+au BufNewFile,BufRead *.pro set filetype=qmake
